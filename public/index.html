@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NNPTUD-S5 - Posts</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+    <h1>Posts</h1>
+
+    <div class="controls">
+      <div class="search">
+        <input id="searchInput" placeholder="Search title..." autocomplete="off" />
+        <ul id="suggestions" class="suggestions"></ul>
+      </div>
+
+      <div class="sliders">
+        <label>Views min: <span id="minVal">0</span></label>
+        <input id="minRange" type="range" min="0" max="1000" value="0">
+        <label>Views max: <span id="maxVal">1000</span></label>
+        <input id="maxRange" type="range" min="0" max="1000" value="1000">
+      </div>
+    </div>
+
+    <section id="posts"></section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
