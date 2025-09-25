@@ -24,6 +24,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/comments',require('./routes/comments'))
 app.use('/products',require('./routes/products'))
+app.use('/categories',require('./routes/categories'))
 
 mongoose.connect('mongodb://localhost:27017/NNPTUD-S5').catch(
   function(err){
