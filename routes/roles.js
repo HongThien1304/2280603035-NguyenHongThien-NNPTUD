@@ -1,27 +1,21 @@
 var express = require('express');
 var router = express.Router();
-let roleSchema = require('../schemas/roles')
+let roleSchema = require('../schemas/role')
+let { Response } = require('../utils/responseHandler');
+let { Authentication, Authorization } = require('../utils/authHandler');
 
 /* GET users listing. */
-router.get('/', async function(req, res, next) {
-  let roles = await roleSchema.find({isDeleted:false});
-  res.send({
-    success:true,
-    data:roles
-  });
+router.get('/', Authentication, Authorization('USER','MOD','ADMIN'), async function(req, res, next) {
+  let roles = await roleSchema.find({isDelete:false});
+  Response(res,200,true,roles);
 });
 router.get('/:id', async function(req, res, next) {
   try {
     let role = await roleSchema.findById(req.params.id);
-    res.send({
-    success:true,
-    data:role
-  });
+    if(!role || role.isDelete) return Response(res,404,false,'Role not found');
+    Response(res,200,true,role);
   } catch (error) {
-    res.status(404).send({
-      success:false,
-      data:error
-    })
+    Response(res,500,false,error);
   }
  
 });
@@ -31,10 +25,7 @@ router.post('/', async function(req, res, next) {
     name:req.body.name
   })
   await newRole.save();
-  res.send({
-      success:true,
-      data:newRole
-    })
+  Response(res,201,true,newRole)
 });
 
 module.exports = router;

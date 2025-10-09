@@ -1,40 +1,35 @@
 var express = require('express');
 var router = express.Router();
-let users = require('../schemas/users');
-let roles = require('../schemas/roles');
+let users = require('../schemas/user');
+let roles = require('../schemas/role');
+let { Response } = require('../utils/responseHandler');
+let { Authentication, Authorization } = require('../utils/authHandler');
 
 /* GET users listing. */
 router.get('/', async function(req, res, next) {
-  let allUsers = await users.find({isDeleted:false}).populate({
+  let allUsers = await users.find({isDelete:false}).populate({
     path: 'role',
     select:'name'
   });
-  res.send({
-    success:true,
-    data:allUsers
-  });
+  Response(res,200,true,allUsers);
 });
 router.get('/:id', async function(req, res, next) {
   try {
     let getUser = await users.findById(req.params.id);
-    getUser = getUser.isDeleted ? new Error("ID not found") : getUser;
-    res.send({
-      success:true,
-      data:getUser
-    });
+    if(!getUser || getUser.isDelete){
+      return Response(res,404,false,'User not found');
+    }
+    Response(res,200,true,getUser);
   } catch (error) {
-     res.send({
-      success:true,
-      data:error
-    });
+     Response(res,500,false,error);
   }
 });
 
 router.post('/', async function(req, res, next) {
-  let role = req.body.role?req.body.role:"USER";
-  let roleId;
-  role = await roles.findOne({name:role});
-  roleId = role._id;
+  let roleName = req.body.role?req.body.role:"USER";
+  let role = await roles.findOne({name:roleName});
+  if(!role) return Response(res,400,false,'Invalid role');
+  let roleId = role._id;
   let newUser = new users({
     username:req.body.username,
     email:req.body.email,
@@ -42,10 +37,7 @@ router.post('/', async function(req, res, next) {
     role:roleId
   })
   await newUser.save();
-  res.send({
-      success:true,
-      data:newUser
-    })
+  Response(res,201,true,newUser);
 });
 router.put('/:id', async function(req, res, next) {
   let user = await users.findById(req.params.id);
@@ -53,10 +45,7 @@ router.put('/:id', async function(req, res, next) {
   user.fullName = req.body.fullName?req.body.fullName:user.fullName;
   user.password = req.body.password?req.body.password:user.password;
   await user.save()
-  res.send({
-      success:true,
-      data:user
-    })
+  Response(res,200,true,user);
 });
 
 module.exports = router;
