@@ -7,6 +7,7 @@ let userSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     fullName: { type: String,default: '' },
     avatarURL: { type: String, default: '' },
+    images: [{ type: String }],
     loginCount: { type: Number, default: 0 },
     isDeleted: { type: Boolean, default: false },   
     role: { type: mongoose.Schema.Types.ObjectId, ref: 'role' },

@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Upload Avatar</title>
+  </head>
+  <body>
+    <h1>Upload Single Avatar</h1>
+    <label>JWT Token (optional, leave blank if using cookie):</label>
+    <input id="token" style="width:400px" placeholder="Bearer ..." />
+    <form id="form">
+      <input type="file" name="image" accept="image/*" />
+      <button type="submit">Upload</button>
+    </form>
+    <pre id="result"></pre>
+
+    <script>
+      const form = document.getElementById('form');
+      const result = document.getElementById('result');
+      const tokenInput = document.getElementById('token');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fd = new FormData(form);
+        const token = tokenInput.value.trim();
+        const headers = {};
+        if (token) headers['Authorization'] = token;
+        const res = await fetch('/users/avatar', { method: 'POST', body: fd, headers });
+        const json = await res.json();
+        result.textContent = JSON.stringify(json, null, 2);
+      });
+    </script>
+  </body>
+</html>
